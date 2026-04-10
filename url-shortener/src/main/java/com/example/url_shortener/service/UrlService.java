@@ -1,14 +1,14 @@
-package service;
+package com.example.url_shortener.service;
 
-import entity.Url;
+import com.example.url_shortener.entity.Url;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import repository.UrlRepository;
-import util.Base62Encoder;
+import com.example.url_shortener.repository.UrlRepository;
+import com.example.url_shortener.util.Base62Encoder;
 
 
 import java.time.LocalDateTime;
-import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -16,8 +16,9 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
     private final Base62Encoder encoder;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public String urlShortener(String originalUrl)
+    public String shortenUrl(String originalUrl)
     {
         Url url= Url.builder().originalUrl(originalUrl).createdAt(LocalDateTime.now()).clickCount(0L).build();
 
@@ -32,8 +33,17 @@ public class UrlService {
 
     public String getOriginalUrl(String shortCode)
     {
+        System.out.println("Checking Redis...");
+        Object cachedUrl=redisTemplate.opsForValue().get(shortCode);
+        if(cachedUrl != null) {
+            System.out.println("Returned from redis");
+            return cachedUrl.toString();
+        }
+
         Url url= urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() ->  new RuntimeException("URl not found"));
+        System.out.println("Saving to Redis...");
+        redisTemplate.opsForValue().set(shortCode, url.getOriginalUrl());
 
         url.setClickCount(url.getClickCount() + 1);
         urlRepository.save(url);

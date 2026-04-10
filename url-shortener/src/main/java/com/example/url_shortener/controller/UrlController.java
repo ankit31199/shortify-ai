@@ -1,11 +1,12 @@
-package controller;
+package  com.example.url_shortener.controller;
 
-package your_package_name.controller;
 
-import service.UrlService;
-import url-shortener.dto.UrlRequest;
-import url-shortener.dto.UrlResponse;
-import url-shortener.service.UrlService;
+
+import com.example.url_shortener.dto.UrlRequest;
+import com.example.url_shortener.dto.UrlResponse;
+import com.example.url_shortener.service.UrlService;
+
+
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,14 +16,14 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/url")
+
 @RequiredArgsConstructor
 public class UrlController {
 
     private final UrlService service;
 
     // 🔹 1. Create Short URL
-    @PostMapping("/shorten")
+    @PostMapping("api/url/shorten")
     public ResponseEntity<UrlResponse> shorten(@RequestBody UrlRequest request) {
 
         String shortCode = service.shortenUrl(request.getOriginalUrl());

@@ -1,4 +1,4 @@
-package entity;
+package com.example.url_shortener.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
