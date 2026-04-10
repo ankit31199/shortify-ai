@@ -4,6 +4,7 @@ package  com.example.url_shortener.controller;
 
 import com.example.url_shortener.dto.UrlRequest;
 import com.example.url_shortener.dto.UrlResponse;
+import com.example.url_shortener.ratelimit.RateLimiterSevice;
 import com.example.url_shortener.service.UrlService;
 
 
@@ -21,11 +22,14 @@ import java.net.URI;
 public class UrlController {
 
     private final UrlService service;
+    private final RateLimiterSevice rateLimiterSevice;
 
     // 🔹 1. Create Short URL
     @PostMapping("api/url/shorten")
-    public ResponseEntity<UrlResponse> shorten(@RequestBody UrlRequest request) {
+    public ResponseEntity<?> shorten(@RequestBody UrlRequest request) {
 
+        if(!rateLimiterSevice.isAllowed("user"))
+            return ResponseEntity.status(429).body("Too Many Requests");
         String shortCode = service.shortenUrl(request.getOriginalUrl());
 
         return ResponseEntity.ok(

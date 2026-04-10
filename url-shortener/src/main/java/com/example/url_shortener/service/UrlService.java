@@ -2,6 +2,7 @@ package com.example.url_shortener.service;
 
 import com.example.url_shortener.entity.Url;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import com.example.url_shortener.repository.UrlRepository;
@@ -9,6 +10,8 @@ import com.example.url_shortener.util.Base62Encoder;
 
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +21,13 @@ public class UrlService {
     private final Base62Encoder encoder;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public String shortenUrl(String originalUrl)
+    public String shortenUrlInternal(String originalUrl)
     {
+        Optional<Url> existing = urlRepository.findByOriginalUrl(originalUrl);
+        if(existing.isPresent())
+        {
+            return existing.get().getShortCode();
+        }
         Url url= Url.builder().originalUrl(originalUrl).createdAt(LocalDateTime.now()).clickCount(0L).build();
 
         url=urlRepository.save(url);
@@ -29,6 +37,19 @@ public class UrlService {
 
         urlRepository.save(url);
         return shortCode;
+    }
+    public String shortenUrl(String originalUrl) {
+
+        try {
+            return shortenUrlInternal(originalUrl);
+
+        } catch (DataIntegrityViolationException e) {
+
+            // 🔥 fallback: someone else inserted same URL
+            return urlRepository.findByOriginalUrl(originalUrl)
+                    .orElseThrow(() -> new RuntimeException("URL exists but not found"))
+                    .getShortCode();
+        }
     }
 
     public String getOriginalUrl(String shortCode)
@@ -43,7 +64,8 @@ public class UrlService {
         Url url= urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() ->  new RuntimeException("URl not found"));
         System.out.println("Saving to Redis...");
-        redisTemplate.opsForValue().set(shortCode, url.getOriginalUrl());
+        redisTemplate.opsForValue().set(shortCode, url.getOriginalUrl(),10,
+                TimeUnit.MINUTES);
 
         url.setClickCount(url.getClickCount() + 1);
         urlRepository.save(url);
