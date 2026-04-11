@@ -1,6 +1,7 @@
 package com.example.url_shortener.service;
 
 import com.example.url_shortener.entity.Url;
+import com.example.url_shortener.kafka.UrlClickProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +21,7 @@ public class UrlService {
     private final UrlRepository urlRepository;
     private final Base62Encoder encoder;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UrlClickProducer producer;
 
     public String shortenUrlInternal(String originalUrl)
     {
@@ -67,8 +69,10 @@ public class UrlService {
         redisTemplate.opsForValue().set(shortCode, url.getOriginalUrl(),10,
                 TimeUnit.MINUTES);
 
-        url.setClickCount(url.getClickCount() + 1);
-        urlRepository.save(url);
+//        url.setClickCount(url.getClickCount() + 1);
+//        urlRepository.save(url);
+        System.out.println("📤 Sending event to Kafka: " + shortCode);
+        producer.sendClickEvent(shortCode);
 
         return url.getOriginalUrl();
     }
