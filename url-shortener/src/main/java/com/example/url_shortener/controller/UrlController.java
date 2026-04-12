@@ -33,12 +33,12 @@ public class UrlController {
         String shortCode = service.shortenUrl(request.getOriginalUrl());
 
         return ResponseEntity.ok(
-                new UrlResponse("http://localhost:8080/" + shortCode)
+                new UrlResponse("http://localhost:8080/r" + shortCode)
         );
     }
 
     // 🔹 2. Redirect to Original URL
-    @GetMapping("/{shortCode}")
+    @GetMapping("/r/{shortCode}")
     public ResponseEntity<Void> redirect(@PathVariable String shortCode) {
 
         String originalUrl = service.getOriginalUrl(shortCode);
