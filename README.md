@@ -1,101 +1,168 @@
-# 🚀 Shortify.ai — Simple & Scalable URL Shortener
+# 🚀 Shortify.ai — AI-Powered URL Shortener
 
-> A clean, high-performance URL shortening service built with modern backend practices.
-
----
+> Transforming simple links into **intelligent, trackable, and scalable digital assets**
 
 ---
 
-## 📌 Overview
-**Shortify.ai** is a backend-focused project that converts long URLs into short, shareable links with reliable redirection and a scalable architecture.
+## 🔥 Overview
 
-This project highlights:
-- Strong backend fundamentals
-- Clean API design
-- Scalable system thinking
+Shortify.ai is an **AI-powered URL shortening platform** that goes beyond traditional link shortening by providing:
+
+* 📊 Real-time analytics
+* ⚡ High-performance redirection
+* 🤖 AI-driven insights *(planned/enhanced)*
+* 🧠 Scalable backend architecture
 
 ---
 
 ## ✨ Features
 
-- 🔗 Shorten long URLs into compact links
-- ⚡ Fast and reliable redirection
-- 🧩 Clean REST API structure
-- 🔐 Unique short code generation
-- 📦 Modular and maintainable codebase
+### 🔗 Core Features
+
+* URL shortening with unique key generation
+* Instant redirection (<200ms latency)
+* Expiry-based links
+* Custom aliases *(optional)*
+
+### 📊 Analytics
+
+* Click tracking
+* Top URLs
+* Usage insights
+* Future: Geo & device tracking
+
+### 🤖 AI Features (Planned / In Progress)
+
+* Smart link categorization
+* Spam / malicious URL detection
+* Click prediction engine
+* Personalized link suggestions
 
 ---
 
-## 🏗️ Tech Stack
+## 🏗️ Architecture Diagram
 
-- **Backend:** Java, Spring Boot
-- **Database:** MongoDB *(or your actual DB — update accordingly)*
-- **Build Tool:** Maven
-- **API Testing:** Postman
 
----
 
-## 📂 Project Structure
-shortify-ai/
-│── src/main/java/
-│ ├── controller/
-│ ├── service/
-│ ├── repository/
-│ ├── model/
-│ └── config/
-│
-│── src/main/resources/
-│── pom.xml
-│── README.md
-
+**Flow:**
+User → API Gateway → Spring Boot Service → DB
+↘ Kafka (Analytics Pipeline)
 
 ---
 
-## 🚀 Getting Started
+## ⚙️ Tech Stack
 
-### Prerequisites
-- Java 17+
-- Maven
-- MongoDB *(if used)*
+* **Backend:** Java, Spring Boot
+* **Database:** MongoDB
+* **Messaging:** Apache Kafka *(for analytics pipeline)*
+* **AI Layer:** Python / LLM (planned integration)
+* **Deployment:** Docker / Cloud (future-ready)
 
-### Run Locally
+---
 
-```bash
-git clone https://github.com/your-username/shortify-ai.git
+## 🧠 System Design
+
+### Key Components:
+
+* URL Service → Generates & resolves short URLs
+* Analytics Service → Tracks clicks & usage
+* AI Service → Enhances insights *(future)*
+
+### Design Decisions:
+
+* Used **PostgreSQL**
+* Optimized read-heavy operations for redirection
+* Decoupled analytics using **Kafka (event-driven architecture)**
+
+---
+
+## ⚡ Scaling Strategy
+
+### 🚀 Performance Optimizations:
+
+* Efficient key generation (Base62 / hashing)
+* Indexed database queries for fast lookups
+* Low-latency redirect handling
+
+### 📈 Scalability Improvements:
+
+* Kafka for async analytics processing
+* Redis caching *(can be added)*
+* Horizontal scaling via stateless services
+
+### 🛡️ Reliability:
+
+* Fault-tolerant event pipeline
+* Retry mechanisms for analytics
+
+---
+
+## 📡 API Documentation
+
+### 🔗 Create Short URL
+
+POST /api/shorten
+
+**Request:**
+{
+"originalUrl": "https://example.com"
+}
+
+**Response:**
+{
+"shortUrl": "http://localhost:8080/abc123"
+}
+
+---
+
+### 🔁 Redirect
+
+GET /{shortCode}
+
+---
+
+### 📊 Analytics
+
+GET /api/analytics
+
+---
+
+## 📸 Screenshots / Demo
+
+
+
+* Postman API responses
+* Analytics output
+* UI dashboard *(if available)*
+
+---
+
+## 🧪 How to Run Locally
+
+git clone https://github.com/ankit31199/shortify-ai.git
 cd shortify-ai
 mvn clean install
 mvn spring-boot:run
 
-| Method | Endpoint       | Description              |
-| ------ | -------------- | ------------------------ |
-| POST   | `/shorten`     | Create a short URL       |
-| GET    | `/{shortCode}` | Redirect to original URL |
-```
-⚙️ How It Works
+---
 
-* User sends a long URL to /shorten
-* System generates a unique short code
-* URL is stored in the database
-* Visiting the short link redirects to the original URL
+## 🌍 Future Enhancements
 
-📈 What This Project Demonstrates
+* AI-powered recommendations
+* Geo-location analytics
+* Rate limiting & security
+* Custom domains
+* Dashboard UI
 
-* Backend development using Spring Boot
-* REST API design best practices
-* Database integration
-* Clean and maintainable architecture
+---
 
-👨‍💻 About Me
+## ⭐ Support
 
-Ankit Tiwari
+If you like this project, consider giving it a ⭐ on GitHub!
 
-1. Java Backend Developer @ TCS
-Skilled in Spring Boot, APIs, and system design
-2. Exploring scalable backend systems
+---
 
-⭐ Support
+## 👨‍💻 Author
 
-If you found this useful:
-
-⭐ Star the repo
-🤝 Connect with me
+**Ankit Tiwari**
+Backend Developer | AI Enthusiast
